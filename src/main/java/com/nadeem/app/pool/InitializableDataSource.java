@@ -19,12 +19,20 @@ public class InitializableDataSource extends BasicDataSource
 
     public void init()
     {
+        addScripts();
+        executeScripts();
+    }
 
-        for (String sqlResource : intScripts)
+    private void addScripts()
+    {
+        for (String sqlResource : getIntScripts())
         {
-            databasePopulator.addScript(this.resourceLoader.getResource(sqlResource));
+            this.databasePopulator.addScript(this.resourceLoader.getResource(sqlResource));
         }
+    }
 
+    private void executeScripts()
+    {
         try
         {
             Connection connection = getConnection();
