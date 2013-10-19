@@ -22,7 +22,7 @@ public final class Application
         }
         catch (Exception e)
         {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("An exception occurred while starting Application {}, Got message {}", ApplicationContext.MAIN_CONTEXT_FILE, e.getMessage());
         }
         finally
         {
@@ -54,7 +54,7 @@ public final class Application
 
     public static String getMainContextFileLocation()
     {
-        return ApplicationContext.MAIN_CONTEXT_FILE_LOCATION;
+        return ApplicationContext.MAIN_CONTEXT_FILE;
     }
 
     private Application()

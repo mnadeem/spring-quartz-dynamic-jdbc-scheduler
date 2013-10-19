@@ -11,6 +11,11 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
+/**
+ * This Datasource has the capability to execute custom scripts on application startup, 
+ * @author nadeem
+ *
+ */
 public class InitializableDataSource extends BasicDataSource
 {
     private List<String> initScripts                          = new ArrayList<String>();
