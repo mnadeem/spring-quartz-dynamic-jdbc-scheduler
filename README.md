@@ -1,0 +1,1 @@
+This project is an example for Quartz JDBC (1.6.0) dynamic Scheduling using spring (2.5.5) and HSQLDB
