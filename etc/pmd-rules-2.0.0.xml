@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         name="Prokarma PMD rules"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+
+  <description>
+	The Favorites ruleset contains links to rules that I like to use.  Usually I
+	combine this ruleset with the unusedcode.xml, basic.xml, and import.xml rulesets for my projects.
+	This ruleset also serves as an example of how to do a custom ruleset. 
+	Moving forward you may see adding new rules to this file.
+  </description>
+ 
+  <!-- The Basic Ruleset contains a collection of good practices which everyone should follow. -->
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.2/rules/java/basic.html -->
+  <rule ref="rulesets/java/basic.xml"/>
+ 
+  <!-- The Braces Ruleset contains a collection of braces rules.  -->
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.2/rules/java/braces.html -->
+  <rule ref="rulesets/java/braces.xml"/>
+  
+   <!-- Clone Implementation ruleset contains a collection of rules that find questionable usages of the clone() method.  -->
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.5/rules/java/clone.html -->
+  <rule ref="rulesets/java/clone.xml/CloneMethodMustImplementCloneable"/>
+  <rule ref="rulesets/java/clone.xml/CloneThrowsCloneNotSupportedException"/>
+
+  <!-- The Code Size Ruleset contains a collection of rules that find code size related problems.
+  	   ExcessiveMethodLength, ExcessiveParameterList, ExcessiveClassLength, CyclomaticComplexity is already in checkstyle.
+  	   No need of ExcessivePublicCount
+  -->
+  <!-- See http://pmd.sourceforge.net/rules/codesize.html -->
+   <rule ref="rulesets/java/codesize.xml/NPathComplexity">
+    <properties>
+        <property name="minimum" value="150"/>
+    </properties>
+   </rule>
+  <rule ref="rulesets/java/codesize.xml/ExcessiveMethodLength"/>
+  <rule ref="rulesets/java/codesize.xml/ExcessiveMethodLength">
+	<properties>
+        <property name="minimum" value="4"/>
+    </properties>
+  </rule>
+  <rule ref="rulesets/java/codesize.xml/ExcessiveClassLength">
+	<properties>
+        <property name="minimum" value="800"/>
+    </properties>
+  </rule>
+
+  <rule ref="rulesets/java/codesize.xml/CyclomaticComplexity">
+      <properties>
+         <property name="reportLevel" value="5"/>
+      </properties>
+  </rule>
+
+  <rule ref="rulesets/java/codesize.xml/TooManyFields">
+      <properties>
+         <property name="maxfields" value="8"/>
+      </properties>
+  </rule>
+
+  <!-- The Unused Code Ruleset contains a collection of rules that find unused code. -->
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.2/rules/java/unusedcode.html -->
+  <rule ref="rulesets/java/unusedcode.xml"/>
+
+  <!-- These are rules which find instances of high or inappropriate coupling between objects and packages. -->
+  <!-- See http://pmd.sourceforge.net/rules/controversial.html -->
+  <rule ref="rulesets/java/controversial.xml/UnnecessaryParentheses"/>
+  <rule ref="rulesets/java/controversial.xml/DefaultPackage"/>
+  <rule ref="rulesets/java/controversial.xml/BooleanInversion"/>
+  <rule ref="rulesets/java/controversial.xml/AvoidFinalLocalVariable"/>
+  <rule ref="rulesets/java/controversial.xml/AvoidLiteralsInIfCondition"/>
+  
+  <!-- These are rules which find instances of high or inappropriate coupling between objects and packages. -->
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.2/rules/java/coupling.html -->
+  <rule ref="rulesets/java/coupling.xml/LooseCoupling"/>
+  <rule ref="rulesets/java/coupling.xml/LawOfDemeter"/>
+
+  <!-- The Design Ruleset contains a collection of rules that find questionable designs. -->
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.2/rules/java/design.html -->
+  <rule ref="rulesets/java/design.xml/UseSingleton"/>
+  <rule ref="rulesets/java/design.xml/AvoidDeeplyNestedIfStmts"/>
+  <rule ref="rulesets/java/design.xml/FinalFieldCouldBeStatic"/>
+  <rule ref="rulesets/java/design.xml/CloseResource"/>
+  <rule ref="rulesets/java/design.xml/OptimizableToArrayCall"/>
+  <rule ref="rulesets/java/design.xml/AvoidDeeplyNestedIfStmts"/>
+  <rule ref="rulesets/java/design.xml/AvoidReassigningParameters"/>
+  <rule ref="rulesets/java/design.xml/ConstructorCallsOverridableMethod"/>
+  <rule ref="rulesets/java/design.xml/FinalFieldCouldBeStatic"/>
+  <rule ref="rulesets/java/design.xml/ConfusingTernary"/>
+  <rule ref="rulesets/java/design.xml/IdempotentOperations"/>
+  <rule ref="rulesets/java/design.xml/ImmutableField"/>
+  <rule ref="rulesets/java/design.xml/AvoidProtectedFieldInFinalClass"/>
+  <rule ref="rulesets/java/design.xml/AssignmentToNonFinalStatic"/>
+  <rule ref="rulesets/java/design.xml/AvoidSynchronizedAtMethodLevel"/>
+  <rule ref="rulesets/java/design.xml/CompareObjectsWithEquals"/>
+  <rule ref="rulesets/java/design.xml/PositionLiteralsFirstInComparisons"/>
+  <rule ref="rulesets/java/design.xml/UnnecessaryLocalBeforeReturn"/><!--Since: PMD 3.3 -->
+  <rule ref="rulesets/java/design.xml/NonThreadSafeSingleton"/><!--Since: PMD 3.4-->
+  <rule ref="rulesets/java/design.xml/UseCollectionIsEmpty" /><!--Since: PMD 3.9-->
+  <rule ref="rulesets/java/design.xml/SingularField"/><!--Since: PMD 3.1-->
+  <rule ref="rulesets/java/design.xml/ReturnEmptyArrayRatherThanNull"/><!--Since: PMD 4.2-->
+  <rule ref="rulesets/java/design.xml/LogicInversion"/><!--Since: PMD 5.0-->
+  <rule ref="rulesets/java/design.xml/UseVarargs"/><!--Since: PMD 5.0-->
+  <rule ref="rulesets/java/design.xml/FieldDeclarationsShouldBeAtStartOfClass"/><!--Since: PMD 5.0-->
+  <rule ref="rulesets/java/design.xml/GodClass"/><!-- Since: PMD 5.0-->
+  
+  <!-- These rules deal with different problems that can occur with finalizers. -->
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.5/rules/java/finalizers.html -->
+  <rule ref="rulesets/java/finalizers.xml"/>
+ 
+  <!-- These rules deal with different problems that can occur with import statements. -->
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.5/rules/java/imports.html -->
+  <rule ref="rulesets/java/imports.xml/DuplicateImports"/>
+  <rule ref="rulesets/java/imports.xml/DontImportJavaLang"/>
+  <rule ref="rulesets/java/imports.xml/UnusedImports"/>
+  <rule ref="rulesets/java/imports.xml/ImportFromSamePackage"/>
+  
+  <!-- The JavaBeans Ruleset catches instances of bean rules not being followed. -->
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.5/rules/java/javabeans.html -->
+  <rule ref="rulesets/java/javabeans.xml/BeanMembersShouldSerialize"/>
+  <rule ref="rulesets/java/javabeans.xml/MissingSerialVersionUID"/>
+  
+  <!-- These rules deal with different problems that can occur with JUnit tests. -->
+  <!-- See http://pmd.sourceforge.net/rules/junit.html -->
+  <rule ref="rulesets/java/junit.xml">
+    <exclude name="JUnitSpelling"/>
+	<exclude name="JUnitStaticSuite"/>
+	<exclude name="JUnitTestContainsTooManyAsserts"/>
+  </rule>
+  
+  <!-- The Java Logging ruleset contains a collection of rules that find questionable usages of the logger. -->
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.5/rules/java/logging-java.html -->
+  <rule ref="rulesets/java/logging-java.xml/LoggerIsNotStaticFinal"/>
+  <rule ref="rulesets/java/logging-java.xml/SystemPrintln"/>
+  <rule ref="rulesets/java/logging-java.xml/AvoidPrintStackTrace"/>
+
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.5/rules/java/migrating.html -->
+  <rule ref="rulesets/java/migrating_to_15.xml"/>
+  
+  <!-- The Naming Ruleset contains a collection of rules about names - too long, too short, and so forth.-->
+  <!-- See http://pmd.sourceforge.net/rules/naming.html-->
+ 
+   <rule ref="rulesets/java/naming.xml/ShortClassName"/>
+   <rule ref="rulesets/java/naming.xml/ShortMethodName"/>
+   <rule ref="rulesets/java/naming.xml/ShortVariable"/>
+   <rule ref="rulesets/java/naming.xml/AbstractNaming"/>
+   <rule ref="rulesets/java/naming.xml/AvoidDollarSigns"/>
+   <rule ref="rulesets/java/naming.xml/MethodWithSameNameAsEnclosingClass"/>
+   <rule ref="rulesets/java/naming.xml/AvoidFieldNameMatchingTypeName"/>
+   <rule ref="rulesets/java/naming.xml/AvoidFieldNameMatchingMethodName"/>
+   <rule ref="rulesets/java/naming.xml/NoPackage"/>
+   <rule ref="rulesets/java/naming.xml/PackageCase"/>
+   
+  
+  <!-- These rules deal with different optimizations that generally apply to performance best practices. -->
+  <!-- See http://pmd.sourceforge.net/rules/optimizations.html -->
+  <rule ref="rulesets/java/optimizations.xml/AvoidInstantiatingObjectsInLoops" />
+  <rule ref="rulesets/java/optimizations.xml/UseArrayListInsteadOfVector" />
+  <rule ref="rulesets/java/optimizations.xml/UseStringBufferForStringAppends" />
+  <rule ref="rulesets/java/optimizations.xml/AvoidArrayLoops" />
+  <rule ref="rulesets/java/optimizations.xml/UnnecessaryWrapperObjectCreation" />
+  <rule ref="rulesets/java/optimizations.xml/AddEmptyString" />
+  
+   <!-- These rules provide some strict guidelines about throwing and catching exceptions. -->
+  <!-- See http://pmd.sourceforge.net/rules/strictexception.html -->
+  <rule ref="rulesets/java/strictexception.xml" />
+  
+  <!-- These rules deal with different problems that can occur with manipulation of the class String or StringBuffer. -->
+  <!-- See http://pmd.sourceforge.net/rules/strings.html -->
+  <rule ref="rulesets/java/strings.xml" />
+  
+  <!-- These rules check the security guidelines from Sun, published at http://java.sun.com/security/seccodeguide.html#gcg -->
+  <!-- See http://pmd.sourceforge.net/rules/sunsecure.html -->
+  <rule ref="rulesets/java/sunsecure.xml" />
+  
+  <!-- The Unused Code ruleset contains rules that find unused or ineffective code. -->
+  <!-- See http://pmd.sourceforge.net/pmd-5.0.5/rules/java/unusedcode.html -->
+  <rule ref="rulesets/java/unusedcode.xml/UnusedPrivateField"/>
+  <rule ref="rulesets/java/unusedcode.xml/UnusedLocalVariable"/>
+  <rule ref="rulesets/java/unusedcode.xml/UnusedPrivateMethod"/>
+
+</ruleset>
