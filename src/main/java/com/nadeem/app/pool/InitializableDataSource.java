@@ -13,44 +13,29 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 public class InitializableDataSource extends BasicDataSource
 {
-    private List<String> intScripts = new ArrayList<String>();
-    private ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
-    private ResourceLoader resourceLoader = new DefaultResourceLoader();
+    private List<String> initScripts                          = new ArrayList<String>();
+    private final ResourceLoader resourceLoader               = new DefaultResourceLoader();
+    private final ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
 
     public void init()
     {
-        addScripts();
-        executeScripts();
+        addScriptsToPopulator();
+        populateDataBase();
     }
 
-    private void addScripts()
+    private void addScriptsToPopulator()
     {
-        for (String sqlResource : getIntScripts())
+        for (String sqlResource : getInitScripts())
         {
             this.databasePopulator.addScript(this.resourceLoader.getResource(sqlResource));
         }
     }
 
-    private void executeScripts()
+    private void populateDataBase()
     {
         try
         {
-            Connection connection = getConnection();
-            try
-            {
-                this.databasePopulator.populate(connection);
-            }
-            finally
-            {
-                try
-                {
-                    connection.close();
-                }
-                catch (SQLException ex)
-                {
-                    // ignore
-                }
-            }
+            doPopulate(getConnection());
         }
         catch (SQLException ex)
         {
@@ -58,13 +43,37 @@ public class InitializableDataSource extends BasicDataSource
         }
     }
 
-    public List<String> getIntScripts()
+    private void doPopulate(final Connection connection) throws SQLException
     {
-        return intScripts;
+        try
+        {
+            this.databasePopulator.populate(connection);
+        }
+        finally
+        {
+            closeQuitely(connection);
+        }
     }
 
-    public void setIntScripts(List<String> intScripts)
+    private void closeQuitely(final Connection connection)
     {
-        this.intScripts = intScripts;
+        try
+        {
+            connection.close();
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+
+    private List<String> getInitScripts()
+    {
+        return this.initScripts;
+    }
+
+    public void setInitScripts(final List<String> newInitScripts)
+    {
+        this.initScripts = newInitScripts;
     }
 }

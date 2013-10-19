@@ -13,22 +13,22 @@ public class ThreadStaller
         this.mutex = this;
     }
 
-    public ThreadStaller(Object mutex)
+    public ThreadStaller(final Object newMutex)
     {
-        this.mutex = mutex;
+        this.mutex = newMutex;
     }
 
     /**
      * Suspend the execution of the current thread.
-     * 
+     *
      * @throws InterruptedException
      */
     public void stall()
     {
         synchronized (this.mutex)
         {
-            stalled = true;
-            while (stalled)
+            this.stalled = true;
+            while (this.stalled)
             {
                 try
                 {

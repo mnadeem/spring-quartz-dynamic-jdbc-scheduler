@@ -3,38 +3,49 @@ package com.nadeem.app;
 import com.nadeem.app.support.ApplicationContext;
 import com.nadeem.app.support.ThreadStaller;
 
-public class Application {
+public final class Application
+{
 
-    private static final ThreadStaller applicationStaller  = new ThreadStaller();
-    private static final ThreadStaller shutdownStaller     = new ThreadStaller();
+    private static final ThreadStaller APPLICATION_STALLER = new ThreadStaller();
+    private static final ThreadStaller SHUTDOWN_STALLER = new ThreadStaller();
 
     public static void main(final String[] args)
     {
-        try {
+        try
+        {
             ApplicationContext.start();
             waitForTermination();
-
-        } catch(Exception e) {
-        	e.printStackTrace();
-        } finally {
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
             ApplicationContext.shutdown();
-            shutdownStaller.unstall(); // Allow the shutdown thread to resume, after which the VM will terminate.
+            SHUTDOWN_STALLER.unstall(); // Allow the shutdown thread to resume, after which the VM will terminate.
         }
     }
 
-    private static void waitForTermination() {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
+    private static void waitForTermination()
+    {
+        Runtime.getRuntime().addShutdownHook(new Thread()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 Application.quit();
-                shutdownStaller.stall(); // Don't finish executing this shutdown thread until the application has finished shutting down and tells it to.
+                SHUTDOWN_STALLER.stall(); // Don't finish executing this shutdown thread until the
+                                            //application has finished shutting down and tells it to.
             }
         });
-        applicationStaller.stall(); // Pause the main() thread.  The shutdown hook registered above will resume execution when it's time to shutdown.
+        APPLICATION_STALLER.stall(); // Pause the main() thread. The shutdown hook registered above
+                                    //will resume execution when it's time to shutdown.
     }
 
-    public static void quit() {
-        applicationStaller.unstall();
+    public static void quit()
+    {
+        APPLICATION_STALLER.unstall();
     }
 
     public static String getMainContextFileLocation()

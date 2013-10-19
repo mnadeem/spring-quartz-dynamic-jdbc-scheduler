@@ -18,9 +18,10 @@ import org.springframework.util.MethodInvoker;
 
 public class BaseDynamicScheduler implements InitializingBean
 {
-    private static final String TARGET_BEAN = "targetBean";
+    private static final String TARGET_BEAN     = "targetBean";
     private static final String METHOD_NAME_KEY = "method";
-    private static final String ARGUMENTS_KEY = "arguments";
+    private static final String ARGUMENTS_KEY   = "arguments";
+    private static final int SIXTY_SECONDS      = 60 * 1000;
 
     private Scheduler scheduler;
     private Object targetBean;
@@ -35,10 +36,10 @@ public class BaseDynamicScheduler implements InitializingBean
     @Override
     public void afterPropertiesSet() throws Exception
     {
-        Assert.notNull(scheduler, "Scheduler must be set.");
-        Assert.notNull(targetBean, "Bean should not be null.");
-        Assert.hasText(targetMethod, "Method name should not be blank.");
-        Assert.hasText(group, "Group property must not be empty");
+        Assert.notNull(this.scheduler, "Scheduler must be set.");
+        Assert.notNull(this.targetBean, "Bean should not be null.");
+        Assert.hasText(this.targetMethod, "Method name should not be blank.");
+        Assert.hasText(this.group, "Group property must not be empty");
     }
 
     public void scheduleInvocation(final String jobName, final Date when, final Object[] args)
@@ -67,7 +68,7 @@ public class BaseDynamicScheduler implements InitializingBean
     {
         try
         {
-            scheduler.removeTriggerListener(jobName);
+            this.scheduler.removeTriggerListener(jobName);
         }
         catch (SchedulerException e)
         {
@@ -77,7 +78,7 @@ public class BaseDynamicScheduler implements InitializingBean
 
     private int frequencyInSeconds(final Integer frequencyInMins)
     {
-        return frequencyInMins * 60 * 1000;
+        return frequencyInMins * SIXTY_SECONDS;
     }
 
     private void doSchedule(final JobDetail job, final Trigger trigger)
@@ -108,7 +109,7 @@ public class BaseDynamicScheduler implements InitializingBean
     {
         try
         {
-            scheduler.scheduleJob(job, trigger);
+            this.scheduler.scheduleJob(job, trigger);
         }
         catch (SchedulerException e)
         {
@@ -120,7 +121,7 @@ public class BaseDynamicScheduler implements InitializingBean
     {
         try
         {
-            scheduler.rescheduleJob(trigger.getName(), this.group, trigger);
+            this.scheduler.rescheduleJob(trigger.getName(), this.group, trigger);
         }
         catch (SchedulerException e)
         {
@@ -145,8 +146,8 @@ public class BaseDynamicScheduler implements InitializingBean
 
     private void setJobArguments(final Object[] args, final JobDetail detail)
     {
-        detail.getJobDataMap().put(TARGET_BEAN, targetBean);
-        detail.getJobDataMap().put(METHOD_NAME_KEY, targetMethod);
+        detail.getJobDataMap().put(TARGET_BEAN, this.targetBean);
+        detail.getJobDataMap().put(METHOD_NAME_KEY, this.targetMethod);
         detail.getJobDataMap().put(ARGUMENTS_KEY, args);
     }
 
