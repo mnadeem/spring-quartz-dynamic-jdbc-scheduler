@@ -8,7 +8,6 @@ public final class ApplicationContext
     private static ClassPathXmlApplicationContext context = null;
 
     public static final String MAIN_CONTEXT_FILE_LOCATION = "com/nadeem/app/config/boot-app-context.xml";
-
     private static final String[] CONFIG_LOCATIONS = new String[] {MAIN_CONTEXT_FILE_LOCATION};
 
     private ApplicationContext()

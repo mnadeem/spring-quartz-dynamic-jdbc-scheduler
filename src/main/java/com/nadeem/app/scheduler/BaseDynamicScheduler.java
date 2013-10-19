@@ -18,10 +18,11 @@ import org.springframework.util.MethodInvoker;
 
 public class BaseDynamicScheduler implements InitializingBean
 {
-    private static final String TARGET_BEAN     = "targetBean";
-    private static final String METHOD_NAME_KEY = "method";
-    private static final String ARGUMENTS_KEY   = "arguments";
     private static final int SIXTY_SECONDS      = 60 * 1000;
+
+    private static final String TARGET_BEAN     = "targetBean";
+    private static final String ARGUMENTS_KEY   = "arguments";
+    private static final String METHOD_NAME_KEY = "method";
 
     private Scheduler scheduler;
     private Object targetBean;
