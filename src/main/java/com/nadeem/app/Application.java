@@ -1,13 +1,17 @@
 package com.nadeem.app;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.nadeem.app.support.ApplicationContext;
 import com.nadeem.app.support.ThreadStaller;
 
 public final class Application
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
-    private static final ThreadStaller APPLICATION_STALLER = new ThreadStaller();
-    private static final ThreadStaller SHUTDOWN_STALLER = new ThreadStaller();
+    private static final ThreadStaller APPLICATION_STALLER  = new ThreadStaller();
+    private static final ThreadStaller SHUTDOWN_STALLER     = new ThreadStaller();
 
     public static void main(final String[] args)
     {
@@ -18,7 +22,7 @@ public final class Application
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
         finally
         {

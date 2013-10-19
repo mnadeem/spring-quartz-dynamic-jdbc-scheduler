@@ -11,6 +11,8 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.support.ArgumentConvertingMethodInvoker;
 import org.springframework.util.Assert;
@@ -18,6 +20,8 @@ import org.springframework.util.MethodInvoker;
 
 public class BaseDynamicScheduler implements InitializingBean
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseDynamicScheduler.class);
+
     private static final int SIXTY_SECONDS      = 60 * 1000;
 
     private static final String TARGET_BEAN     = "targetBean";
@@ -164,6 +168,7 @@ public class BaseDynamicScheduler implements InitializingBean
             }
             catch (Exception e)
             {
+                LOGGER.error(e.getMessage());
                 throw new JobExecutionException(e);
             }
         }

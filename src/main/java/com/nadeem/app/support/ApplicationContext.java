@@ -1,9 +1,12 @@
 package com.nadeem.app.support;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public final class ApplicationContext
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContext.class);
 
     private static ClassPathXmlApplicationContext context = null;
 
@@ -41,6 +44,7 @@ public final class ApplicationContext
     {
         if (context == null)
         {
+            LOGGER.debug("No context found, initializing one");
             context = new ClassPathXmlApplicationContext(CONFIG_LOCATIONS);
         }
     }
