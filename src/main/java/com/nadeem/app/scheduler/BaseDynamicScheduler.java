@@ -231,9 +231,4 @@ public class BaseDynamicScheduler implements InitializingBean
             return methodArgs;
         }
     }
-
-    public void setScheduler(final Scheduler newScheduler)
-    {
-        this.scheduler = newScheduler;
-    }
 }
