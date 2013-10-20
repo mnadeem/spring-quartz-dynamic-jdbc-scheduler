@@ -3,6 +3,7 @@ package com.nadeem.app;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.nadeem.app.scheduler.BaseDynamicScheduler;
 import com.nadeem.app.support.ApplicationContext;
 import com.nadeem.app.support.ThreadStaller;
 
@@ -18,6 +19,7 @@ public final class Application
         try
         {
             ApplicationContext.start();
+            doBusiness();
             waitForTermination();
         }
         catch (Exception e)
@@ -29,6 +31,12 @@ public final class Application
             ApplicationContext.shutdown();
             SHUTDOWN_STALLER.unstall(); // Allow the shutdown thread to resume, after which the VM will terminate.
         }
+    }
+
+    private static void doBusiness()
+    {
+        BaseDynamicScheduler scheduler = ApplicationContext.getBean("dynamicScheduler");
+        scheduler.scheduleWithInterval("test", 1, new Object[]{"Nadeem"});
     }
 
     private static void waitForTermination()

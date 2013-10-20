@@ -7,7 +7,7 @@
                                    http://www.springframework.org/schema/util
 								   http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="autoStartup" value="true" />
 		<property name="waitForJobsToCompleteOnShutdown" value="true" />
 		<property name="overwriteExistingJobs" value="true" />
@@ -20,6 +20,7 @@
 
 		<property name="quartzProperties">
 			<props>
+				<prop key="org.quartz.scheduler.jmx.export">true</prop>
 				<prop key="org.quartz.scheduler.instanceName">InstanceNameX</prop>
 				<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
 				<prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
@@ -27,7 +28,7 @@
 				<prop key="org.quartz.threadPool.threadPriority">5</prop>
 				<prop key="org.quartz.jobStore.misfireThreshold">60000</prop>
 				<prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreTX</prop>
-				<prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.HSQLDBDelegate</prop>
+				<prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
 				<prop key="org.quartz.jobStore.useProperties">false</prop>
 				<prop key="org.quartz.jobStore.isClustered">true</prop>
 				<prop key="org.quartz.jobStore.clusterCheckinInterval">20000</prop>
@@ -36,6 +37,15 @@
 
 			</props>
 		</property>
+	</bean>
+
+	<bean id="targetBean" class="com.nadeem.app.scheduler.SimpleBean" />
+	
+	<bean id="dynamicScheduler" class="com.nadeem.app.scheduler.BaseDynamicScheduler">
+		<constructor-arg ref="scheduler"/>
+		<property name="targetBean" ref="targetBean"/>
+		<property name="targetMethod" value="sayHello"/>
+		<property name="group" value="DYNAMIC"/>
 	</bean>
 
 </beans>
