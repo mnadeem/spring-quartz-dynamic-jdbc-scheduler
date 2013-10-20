@@ -43,8 +43,6 @@
 	
 	<bean id="dynamicScheduler" class="com.nadeem.app.scheduler.BaseDynamicScheduler">
 		<constructor-arg ref="scheduler"/>
-		<property name="targetBean" ref="targetBean"/>
-		<property name="targetMethod" value="sayHello"/>
 	</bean>
 
 </beans>

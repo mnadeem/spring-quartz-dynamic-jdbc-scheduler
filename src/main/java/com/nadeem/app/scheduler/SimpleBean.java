@@ -11,5 +11,4 @@ public class SimpleBean implements Serializable
     {
         System.out.println("Hello " + someBody + "!");
     }
-
 }

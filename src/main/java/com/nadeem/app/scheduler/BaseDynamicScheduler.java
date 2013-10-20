@@ -28,8 +28,6 @@ public class BaseDynamicScheduler implements InitializingBean
     private static final String METHOD_NAME_KEY = "method";
 
     private Scheduler scheduler;
-    private Object targetBean;
-    private String targetMethod;
 
     public BaseDynamicScheduler(final Scheduler newScheduler)
     {
@@ -40,47 +38,46 @@ public class BaseDynamicScheduler implements InitializingBean
     public void afterPropertiesSet() throws Exception
     {
         Assert.notNull(this.scheduler, "Scheduler must be set.");
-        Assert.notNull(this.targetBean, "Bean should not be null.");
-        Assert.hasText(this.targetMethod, "Method name should not be blank.");
     }
 
-    public void scheduleInvocation(final String jobName, final String group, final Date when, final Object[] args)
+    public void scheduleInvocation(final String jobName, final String group, final Date when, final InvocationDetail invocationDetail)
     {
         SimpleTrigger trigger = new SimpleTrigger(jobName, group, when);
         trigger.setJobName(jobName);
         trigger.setJobGroup(group);
-        doSchedule(createJobDetail(args, jobName, group), trigger);
+        doSchedule(createJobDetail(invocationDetail, jobName, group), trigger);
     }
 
-    public void scheduleWithInterval(final String jobName, final String group, final Duration repeateInterval, final Object[] args)
+    public void scheduleWithInterval(final String jobName, final String group, final Duration repeateInterval, final InvocationDetail invocationDetail)
     {
         SimpleTrigger trigger = new SimpleTrigger(jobName, group, new Date());
-        trigger.setRepeatInterval(repeateInterval.getStandardSeconds());
+        trigger.setRepeatInterval(repeateInterval.getMillis());
         trigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
         trigger.setJobName(jobName);
         trigger.setJobGroup(group);
-        doSchedule(createJobDetail(args, jobName, group), trigger);
+        doSchedule(createJobDetail(invocationDetail, jobName, group), trigger);
     }
 
-    private JobDetail createJobDetail(final Object[] args, final String jobName, final String group)
+    private JobDetail createJobDetail(final InvocationDetail invocationDetail, final String jobName, final String group)
     {
         JobDetail detail = new JobDetail(jobName, group, MethodInvocatingScheduledJob.class);
-        setJobArguments(args, detail);
+        setJobArguments(invocationDetail, detail);
         setJobToAutoDelete(detail);
         return detail;
     }
 
-    private void setJobArguments(final Object[] args, final JobDetail detail)
+    private void setJobArguments(final InvocationDetail invocationDetail, final JobDetail detail)
     {
-        detail.getJobDataMap().put(TARGET_BEAN, this.targetBean);
-        detail.getJobDataMap().put(METHOD_NAME_KEY, this.targetMethod);
-        detail.getJobDataMap().put(ARGUMENTS_KEY, args);
+        detail.getJobDataMap().put(TARGET_BEAN, invocationDetail.getTargetBean());
+        detail.getJobDataMap().put(METHOD_NAME_KEY, invocationDetail.getTargetMethod());
+        detail.getJobDataMap().put(ARGUMENTS_KEY, invocationDetail.getMethodArgs());
     }
 
     private void setJobToAutoDelete(final JobDetail detail)
     {
         detail.setDurability(false);
     }
+
     private void doSchedule(final JobDetail job, final Trigger trigger)
     {
         if (isJobExists(job))
@@ -191,19 +188,36 @@ public class BaseDynamicScheduler implements InitializingBean
             inv.invoke();
         }
     }
+    
+    public static class InvocationDetail
+    {
+        private Object targetBean;
+        private String targetMethod;
+        private Object[] methodArgs;
+
+        public InvocationDetail(Object newTargetBean, String newTargetMethod, Object[] newMethodArgs)
+        {
+            this.targetBean = newTargetBean;
+            this.targetMethod = newTargetMethod;
+            this.methodArgs = newMethodArgs;
+        }
+
+        public Object getTargetBean()
+        {
+            return targetBean;
+        }
+        public String getTargetMethod()
+        {
+            return targetMethod;
+        }
+        public Object[] getMethodArgs()
+        {
+            return methodArgs;
+        }       
+    }
 
     public void setScheduler(final Scheduler newScheduler)
     {
         this.scheduler = newScheduler;
-    }
-
-    public void setTargetBean(final Object newTargetBean)
-    {
-        this.targetBean = newTargetBean;
-    }
-
-    public void setTargetMethod(final String newTargetMethod)
-    {
-        this.targetMethod = newTargetMethod;
     }
 }

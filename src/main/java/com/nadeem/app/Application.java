@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nadeem.app.scheduler.BaseDynamicScheduler;
+import com.nadeem.app.scheduler.BaseDynamicScheduler.InvocationDetail;
 import com.nadeem.app.support.ApplicationContext;
 import com.nadeem.app.support.ThreadStaller;
 
@@ -37,7 +38,12 @@ public final class Application
     private static void doBusiness()
     {
         BaseDynamicScheduler scheduler = ApplicationContext.getBean("dynamicScheduler");
-        scheduler.scheduleWithInterval("test", "Dynamicgroup", Minutes.ONE.toStandardDuration(), new Object[]{"Nadeem"});
+        scheduler.scheduleWithInterval("test", "Dynamicgroup", Minutes.ONE.toStandardDuration(), newInvocationDetail());
+    }
+
+    private static InvocationDetail newInvocationDetail()
+    {
+        return new InvocationDetail(ApplicationContext.getBean("targetBean"), "sayHello", new Object[]{"Nadeem"});
     }
 
     private static void waitForTermination()
