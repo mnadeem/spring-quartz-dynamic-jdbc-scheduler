@@ -43,21 +43,33 @@ public class BaseDynamicScheduler implements InitializingBean
     public void scheduleInvocation(final String jobName, final String group, final Date when,
         final InvocationDetail invocationDetail)
     {
+        schedule(createDynamicJobDetail(invocationDetail, jobName, group), buildExactTimeTrigger(jobName, group, when));
+    }
+
+    private SimpleTrigger buildExactTimeTrigger(final String jobName, final String group, final Date when)
+    {
         SimpleTrigger trigger = new SimpleTrigger(jobName, group, when);
         trigger.setJobName(jobName);
         trigger.setJobGroup(group);
-        schedule(createDynamicJobDetail(invocationDetail, jobName, group), trigger);
+        return trigger;
     }
 
     public void scheduleWithInterval(final String jobName, final String group, final Duration repeateInterval,
         final InvocationDetail invocationDetail)
+    {
+        SimpleTrigger trigger = buildRepeatingInterval(jobName, group, repeateInterval);
+        schedule(createDynamicJobDetail(invocationDetail, jobName, group), trigger);
+    }
+
+    private SimpleTrigger buildRepeatingInterval(final String jobName, final String group,
+        final Duration repeateInterval)
     {
         SimpleTrigger trigger = new SimpleTrigger(jobName, group, new Date());
         trigger.setRepeatInterval(repeateInterval.getMillis());
         trigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
         trigger.setJobName(jobName);
         trigger.setJobGroup(group);
-        schedule(createDynamicJobDetail(invocationDetail, jobName, group), trigger);
+        return trigger;
     }
 
     private JobDetail createDynamicJobDetail(final InvocationDetail invocationDetail, final String jobName, final String group)
@@ -100,7 +112,7 @@ public class BaseDynamicScheduler implements InitializingBean
         }
         catch (SchedulerException e)
         {
-            throw new IllegalStateException("Failed to schedule the Job.");
+            throw new IllegalStateException("Failed to find Job.", e);
         }
     }
 
@@ -124,7 +136,7 @@ public class BaseDynamicScheduler implements InitializingBean
         }
         catch (SchedulerException e)
         {
-            throw new IllegalStateException("Failed to schedule the Job.", e);
+            throw new IllegalStateException("Failed to reschedule the Job.", e);
         }
     }
 
@@ -138,7 +150,7 @@ public class BaseDynamicScheduler implements InitializingBean
         }
         catch (SchedulerException e)
         {
-            throw new IllegalStateException("Failed to schedule the Job.", e);
+            throw new IllegalStateException("Failed to delete the Job.", e);
         }
     }
 
