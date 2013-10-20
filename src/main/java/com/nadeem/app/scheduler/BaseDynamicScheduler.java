@@ -27,7 +27,7 @@ public class BaseDynamicScheduler implements InitializingBean
     private static final String ARGUMENTS_KEY = "arguments";
     private static final String METHOD_NAME_KEY = "method";
 
-    private Scheduler scheduler;
+    private final Scheduler scheduler;
 
     public BaseDynamicScheduler(final Scheduler newScheduler)
     {
