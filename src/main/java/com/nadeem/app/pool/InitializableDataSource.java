@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -32,8 +33,13 @@ public class InitializableDataSource extends BasicDataSource
     {
         for (String sqlResource : getInitScripts())
         {
-            this.databasePopulator.addScript(this.resourceLoader.getResource(sqlResource));
+            this.databasePopulator.addScript(loadScript(sqlResource));
         }
+    }
+
+    private Resource loadScript(String sqlResource)
+    {
+        return this.resourceLoader.getResource(sqlResource);
     }
 
     private void populateDataBase()
