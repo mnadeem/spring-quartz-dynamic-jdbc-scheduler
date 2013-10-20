@@ -1,5 +1,6 @@
 package com.nadeem.app;
 
+import org.joda.time.Minutes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public final class Application
     private static void doBusiness()
     {
         BaseDynamicScheduler scheduler = ApplicationContext.getBean("dynamicScheduler");
-        scheduler.scheduleWithInterval("test", "Dynamicgroup", 1, new Object[]{"Nadeem"});
+        scheduler.scheduleWithInterval("test", "Dynamicgroup", Minutes.ONE.toStandardDuration(), new Object[]{"Nadeem"});
     }
 
     private static void waitForTermination()

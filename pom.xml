@@ -7,8 +7,10 @@
 
 	<properties>
 		<cglib.version>2.1_3</cglib.version>
+		<commons-collections.version>3.2.1</commons-collections.version>
 		<commons-dbcp.version>1.2.2</commons-dbcp.version>
 		<commons-logging.version>1.1.1</commons-logging.version>
+		<commons-modeler.version>2.0.1</commons-modeler.version>
 		<hsqldb.version>1.8.0.1</hsqldb.version>
 		<jta.version>1.0.1B</jta.version>
 		<log4j.version>1.2.14</log4j.version>
@@ -17,6 +19,7 @@
 		<slf4j.version>1.7.5</slf4j.version>
 		<springframework.version>2.5.5</springframework.version>
 		<logback.version>1.0.13</logback.version>
+		<joda.version>2.3</joda.version>
 		<junit.version>4.11</junit.version>
 		<easytesting.version>2.0M10</easytesting.version>
 	</properties>
@@ -39,6 +42,22 @@
 			<artifactId>commons-logging</artifactId>
 			<version>${commons-logging.version}</version>
 			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-modeler</groupId>
+			<artifactId>commons-modeler</artifactId>
+			<version>${commons-modeler.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>${commons-collections.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${joda.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>hsqldb</groupId>
@@ -121,17 +140,6 @@
 			<artifactId>fest-assert-core</artifactId>
 			<version>${easytesting.version}</version>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-modeler</groupId>
-			<artifactId>commons-modeler</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2.1</version>
 		</dependency>
 	</dependencies>
 

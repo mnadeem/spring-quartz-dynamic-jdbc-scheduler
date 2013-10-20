@@ -2,6 +2,7 @@ package com.nadeem.app.scheduler;
 
 import java.util.Date;
 
+import org.joda.time.Duration;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -21,8 +22,6 @@ import org.springframework.util.MethodInvoker;
 public class BaseDynamicScheduler implements InitializingBean
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseDynamicScheduler.class);
-
-    private static final int SIXTY_SECONDS      = 60 * 1000;
 
     private static final String TARGET_BEAN     = "targetBean";
     private static final String ARGUMENTS_KEY   = "arguments";
@@ -53,37 +52,35 @@ public class BaseDynamicScheduler implements InitializingBean
         doSchedule(createJobDetail(args, jobName, group), trigger);
     }
 
-    public void scheduleWithInterval(final String jobName, final String group, final Integer frequencyInMins, final Object[] args)
+    public void scheduleWithInterval(final String jobName, final String group, final Duration repeateInterval, final Object[] args)
     {
-        if (frequencyInMins <= 0)
-        {
-            throw new IllegalArgumentException("Frequency interval should be a positive integer.");
-        }
         SimpleTrigger trigger = new SimpleTrigger(jobName, group, new Date());
-        trigger.setRepeatInterval(frequencyInSeconds(frequencyInMins));
+        trigger.setRepeatInterval(repeateInterval.getStandardSeconds());
         trigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
         trigger.setJobName(jobName);
         trigger.setJobGroup(group);
         doSchedule(createJobDetail(args, jobName, group), trigger);
     }
 
-    public void removeScheduler(final String jobName)
+    private JobDetail createJobDetail(final Object[] args, final String jobName, final String group)
     {
-        try
-        {
-            this.scheduler.removeTriggerListener(jobName);
-        }
-        catch (SchedulerException e)
-        {
-            throw new IllegalStateException("Failed to schedule the Job.");
-        }
+        JobDetail detail = new JobDetail(jobName, group, MethodInvocatingScheduledJob.class);
+        setJobArguments(args, detail);
+        setJobToAutoDelete(detail);
+        return detail;
     }
 
-    private int frequencyInSeconds(final Integer frequencyInMins)
+    private void setJobArguments(final Object[] args, final JobDetail detail)
     {
-        return frequencyInMins * SIXTY_SECONDS;
+        detail.getJobDataMap().put(TARGET_BEAN, this.targetBean);
+        detail.getJobDataMap().put(METHOD_NAME_KEY, this.targetMethod);
+        detail.getJobDataMap().put(ARGUMENTS_KEY, args);
     }
 
+    private void setJobToAutoDelete(final JobDetail detail)
+    {
+        detail.setDurability(false);
+    }
     private void doSchedule(final JobDetail job, final Trigger trigger)
     {
         if (isJobExists(job))
@@ -116,7 +113,7 @@ public class BaseDynamicScheduler implements InitializingBean
         }
         catch (SchedulerException e)
         {
-            throw new IllegalStateException("Failed to schedule the Job.");
+            throw new IllegalStateException("Failed to schedule the Job.", e);
         }
     }
 
@@ -128,32 +125,25 @@ public class BaseDynamicScheduler implements InitializingBean
         }
         catch (SchedulerException e)
         {
-            throw new IllegalStateException("Failed to schedule the Job.");
+            throw new IllegalStateException("Failed to schedule the Job.", e);
         }
     }
 
-    private JobDetail createJobDetail(final Object[] args, final String jobName, final String group)
+    public void deleteJob(final String jobName, final String group)
     {
-        JobDetail detail = new JobDetail(jobName, group, ScheduledJob.class);
-        setJobArguments(args, detail);
-        setJobToAutoDelete(detail);
-
-        return detail;
+        try
+        {
+            this.scheduler.unscheduleJob(jobName, group);
+            this.scheduler.deleteJob(jobName, group);
+            this.scheduler.removeTriggerListener(jobName);
+        }
+        catch (SchedulerException e)
+        {
+            throw new IllegalStateException("Failed to schedule the Job.", e);
+        }
     }
 
-    private void setJobToAutoDelete(final JobDetail detail)
-    {
-        detail.setDurability(false);
-    }
-
-    private void setJobArguments(final Object[] args, final JobDetail detail)
-    {
-        detail.getJobDataMap().put(TARGET_BEAN, this.targetBean);
-        detail.getJobDataMap().put(METHOD_NAME_KEY, this.targetMethod);
-        detail.getJobDataMap().put(ARGUMENTS_KEY, args);
-    }
-
-    public static class ScheduledJob implements Job
+    public static class MethodInvocatingScheduledJob implements Job
     {
         @Override
         public void execute(final JobExecutionContext context) throws JobExecutionException
