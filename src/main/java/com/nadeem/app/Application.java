@@ -38,7 +38,9 @@ public final class Application
     private static void doBusiness()
     {
         BaseDynamicScheduler scheduler = ApplicationContext.getBean("dynamicScheduler");
-        scheduler.scheduleWithInterval("test", "Dynamicgroup", Minutes.ONE.toStandardDuration(), newInvocationDetail());
+        String jobName = "test";
+        String group = "Dynamicgroup";
+        scheduler.scheduleWithInterval(jobName, group, Minutes.ONE.toStandardDuration(), newInvocationDetail());
     }
 
     private static InvocationDetail newInvocationDetail()
