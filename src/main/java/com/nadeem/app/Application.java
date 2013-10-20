@@ -36,7 +36,7 @@ public final class Application
     private static void doBusiness()
     {
         BaseDynamicScheduler scheduler = ApplicationContext.getBean("dynamicScheduler");
-        scheduler.scheduleWithInterval("test", 1, new Object[]{"Nadeem"});
+        scheduler.scheduleWithInterval("test", "Dynamicgroup", 1, new Object[]{"Nadeem"});
     }
 
     private static void waitForTermination()

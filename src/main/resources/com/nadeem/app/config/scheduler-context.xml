@@ -45,7 +45,6 @@
 		<constructor-arg ref="scheduler"/>
 		<property name="targetBean" ref="targetBean"/>
 		<property name="targetMethod" value="sayHello"/>
-		<property name="group" value="DYNAMIC"/>
 	</bean>
 
 </beans>

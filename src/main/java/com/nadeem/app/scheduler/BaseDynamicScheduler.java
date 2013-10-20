@@ -31,7 +31,6 @@ public class BaseDynamicScheduler implements InitializingBean
     private Scheduler scheduler;
     private Object targetBean;
     private String targetMethod;
-    private String group;
 
     public BaseDynamicScheduler(final Scheduler newScheduler)
     {
@@ -44,29 +43,28 @@ public class BaseDynamicScheduler implements InitializingBean
         Assert.notNull(this.scheduler, "Scheduler must be set.");
         Assert.notNull(this.targetBean, "Bean should not be null.");
         Assert.hasText(this.targetMethod, "Method name should not be blank.");
-        Assert.hasText(this.group, "Group property must not be empty");
     }
 
-    public void scheduleInvocation(final String jobName, final Date when, final Object[] args)
+    public void scheduleInvocation(final String jobName, final String group, final Date when, final Object[] args)
     {
-        SimpleTrigger trigger = new SimpleTrigger(jobName, this.group, when);
+        SimpleTrigger trigger = new SimpleTrigger(jobName, group, when);
         trigger.setJobName(jobName);
-        trigger.setJobGroup(this.group);
-        doSchedule(createJobDetail(args, jobName), trigger);
+        trigger.setJobGroup(group);
+        doSchedule(createJobDetail(args, jobName, group), trigger);
     }
 
-    public void scheduleWithInterval(final String jobName, final Integer frequencyInMins, final Object[] args)
+    public void scheduleWithInterval(final String jobName, final String group, final Integer frequencyInMins, final Object[] args)
     {
         if (frequencyInMins <= 0)
         {
             throw new IllegalArgumentException("Frequency interval should be a positive integer.");
         }
-        SimpleTrigger trigger = new SimpleTrigger(jobName, this.group, new Date());
+        SimpleTrigger trigger = new SimpleTrigger(jobName, group, new Date());
         trigger.setRepeatInterval(frequencyInSeconds(frequencyInMins));
         trigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
         trigger.setJobName(jobName);
-        trigger.setJobGroup(this.group);
-        doSchedule(createJobDetail(args, jobName), trigger);
+        trigger.setJobGroup(group);
+        doSchedule(createJobDetail(args, jobName, group), trigger);
     }
 
     public void removeScheduler(final String jobName)
@@ -102,7 +100,7 @@ public class BaseDynamicScheduler implements InitializingBean
     {
         try
         {
-            return this.scheduler.getJobDetail(job.getName(), this.group) != null;
+            return this.scheduler.getJobDetail(job.getName(), job.getGroup()) != null;
         }
         catch (SchedulerException e)
         {
@@ -126,7 +124,7 @@ public class BaseDynamicScheduler implements InitializingBean
     {
         try
         {
-            this.scheduler.rescheduleJob(trigger.getName(), this.group, trigger);
+            this.scheduler.rescheduleJob(trigger.getName(), job.getGroup(), trigger);
         }
         catch (SchedulerException e)
         {
@@ -134,12 +132,11 @@ public class BaseDynamicScheduler implements InitializingBean
         }
     }
 
-    private JobDetail createJobDetail(final Object[] args, final String jobName)
+    private JobDetail createJobDetail(final Object[] args, final String jobName, final String group)
     {
-        JobDetail detail = new JobDetail(jobName, this.getGroup(), ScheduledJob.class);
+        JobDetail detail = new JobDetail(jobName, group, ScheduledJob.class);
         setJobArguments(args, detail);
         setJobToAutoDelete(detail);
-
 
         return detail;
     }
@@ -203,16 +200,6 @@ public class BaseDynamicScheduler implements InitializingBean
             inv.prepare();
             inv.invoke();
         }
-    }
-
-    public String getGroup()
-    {
-        return this.group;
-    }
-
-    public void setGroup(final String newGroup)
-    {
-        this.group = newGroup;
     }
 
     public void setScheduler(final Scheduler newScheduler)
