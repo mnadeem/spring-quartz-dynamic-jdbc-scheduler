@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -13,12 +15,15 @@ import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 /**
- * This Datasource has the capability to execute custom scripts on application startup, 
+ * This Datasource has the capability to execute custom scripts on application startup,
  * @author nadeem
  *
  */
 public class InitializableDataSource extends BasicDataSource
 {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(InitializableDataSource.class);
+
     private List<String> initScripts                          = new ArrayList<String>();
     private final ResourceLoader resourceLoader               = new DefaultResourceLoader();
     private final ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
@@ -37,7 +42,7 @@ public class InitializableDataSource extends BasicDataSource
         }
     }
 
-    private Resource loadScript(String sqlResource)
+    private Resource loadScript(final String sqlResource)
     {
         return this.resourceLoader.getResource(sqlResource);
     }
@@ -74,7 +79,7 @@ public class InitializableDataSource extends BasicDataSource
         }
         catch (SQLException ex)
         {
-            ex.printStackTrace();
+            LOGGER.info("error Closing Connection {}", ex.getMessage());
         }
     }
 
