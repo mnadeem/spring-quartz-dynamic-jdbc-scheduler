@@ -23,8 +23,8 @@ public class BaseDynamicScheduler implements InitializingBean
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseDynamicScheduler.class);
 
-    private static final String TARGET_BEAN     = "targetBean";
-    private static final String ARGUMENTS_KEY   = "arguments";
+    private static final String TARGET_BEAN = "targetBean";
+    private static final String ARGUMENTS_KEY = "arguments";
     private static final String METHOD_NAME_KEY = "method";
 
     private Scheduler scheduler;
@@ -40,25 +40,27 @@ public class BaseDynamicScheduler implements InitializingBean
         Assert.notNull(this.scheduler, "Scheduler must be set.");
     }
 
-    public void scheduleInvocation(final String jobName, final String group, final Date when, final InvocationDetail invocationDetail)
+    public void scheduleInvocation(final String jobName, final String group, final Date when,
+        final InvocationDetail invocationDetail)
     {
         SimpleTrigger trigger = new SimpleTrigger(jobName, group, when);
         trigger.setJobName(jobName);
         trigger.setJobGroup(group);
-        doSchedule(createJobDetail(invocationDetail, jobName, group), trigger);
+        schedule(createDynamicJobDetail(invocationDetail, jobName, group), trigger);
     }
 
-    public void scheduleWithInterval(final String jobName, final String group, final Duration repeateInterval, final InvocationDetail invocationDetail)
+    public void scheduleWithInterval(final String jobName, final String group, final Duration repeateInterval,
+        final InvocationDetail invocationDetail)
     {
         SimpleTrigger trigger = new SimpleTrigger(jobName, group, new Date());
         trigger.setRepeatInterval(repeateInterval.getMillis());
         trigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
         trigger.setJobName(jobName);
         trigger.setJobGroup(group);
-        doSchedule(createJobDetail(invocationDetail, jobName, group), trigger);
+        schedule(createDynamicJobDetail(invocationDetail, jobName, group), trigger);
     }
 
-    private JobDetail createJobDetail(final InvocationDetail invocationDetail, final String jobName, final String group)
+    private JobDetail createDynamicJobDetail(final InvocationDetail invocationDetail, final String jobName, final String group)
     {
         JobDetail detail = new JobDetail(jobName, group, MethodInvocatingScheduledJob.class);
         setJobArguments(invocationDetail, detail);
@@ -78,7 +80,7 @@ public class BaseDynamicScheduler implements InitializingBean
         detail.setDurability(false);
     }
 
-    private void doSchedule(final JobDetail job, final Trigger trigger)
+    public void schedule(final JobDetail job, final Trigger trigger)
     {
         if (isJobExists(job))
         {
@@ -86,11 +88,11 @@ public class BaseDynamicScheduler implements InitializingBean
         }
         else
         {
-            scheduleJob(job, trigger);
+            doScheduleJob(job, trigger);
         }
     }
 
-    private boolean isJobExists(final JobDetail job)
+    public boolean isJobExists(final JobDetail job)
     {
         try
         {
@@ -102,7 +104,7 @@ public class BaseDynamicScheduler implements InitializingBean
         }
     }
 
-    private void scheduleJob(final JobDetail job, final Trigger trigger)
+    private void doScheduleJob(final JobDetail job, final Trigger trigger)
     {
         try
         {
@@ -188,14 +190,14 @@ public class BaseDynamicScheduler implements InitializingBean
             inv.invoke();
         }
     }
-    
+
     public static class InvocationDetail
     {
         private Object targetBean;
         private String targetMethod;
         private Object[] methodArgs;
 
-        public InvocationDetail(Object newTargetBean, String newTargetMethod, Object[] newMethodArgs)
+        public InvocationDetail(final Object newTargetBean, final String newTargetMethod, final Object[] newMethodArgs)
         {
             this.targetBean = newTargetBean;
             this.targetMethod = newTargetMethod;
@@ -206,14 +208,16 @@ public class BaseDynamicScheduler implements InitializingBean
         {
             return targetBean;
         }
+
         public String getTargetMethod()
         {
             return targetMethod;
         }
+
         public Object[] getMethodArgs()
         {
             return methodArgs;
-        }       
+        }
     }
 
     public void setScheduler(final Scheduler newScheduler)
