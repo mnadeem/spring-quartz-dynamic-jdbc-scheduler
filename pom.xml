@@ -15,6 +15,8 @@
 		<jta.version>1.0.1B</jta.version>
 		<log4j.version>1.2.14</log4j.version>
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<mockito.version>1.9.5</mockito.version>
+		<powermock.version>1.5.1</powermock.version>
 		<quartz.version>1.6.0</quartz.version>
 		<slf4j.version>1.7.5</slf4j.version>
 		<springframework.version>2.5.5</springframework.version>
@@ -43,7 +45,7 @@
 			<version>${commons-logging.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-modeler</groupId>
 			<artifactId>commons-modeler</artifactId>
@@ -141,6 +143,19 @@
 			<version>${easytesting.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
