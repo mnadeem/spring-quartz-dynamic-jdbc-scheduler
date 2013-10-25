@@ -1,8 +1,10 @@
 package com.nadeem.app.scheduler;
 
+import java.text.ParseException;
 import java.util.Date;
 
 import org.joda.time.Duration;
+import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -38,6 +40,26 @@ public class BaseDynamicScheduler implements InitializingBean
     public void afterPropertiesSet() throws Exception
     {
         Assert.notNull(this.scheduler, "Scheduler must be set.");
+    }
+
+    public void scheduleInvocation(final String jobName, final String group, final String cronExpression,
+        final InvocationDetail invocationDetail)
+    {
+        schedule(createDynamicJobDetail(invocationDetail, jobName, group), buildCronTrigger(jobName, group, cronExpression));
+    }
+
+    private Trigger buildCronTrigger(final String jobName, final String group, final String cronExpression)
+    {
+        CronTrigger trigger;
+        try
+        {
+            trigger = new CronTrigger(jobName, group, jobName, group, cronExpression);
+        }
+        catch (ParseException e)
+        {
+            throw new IllegalArgumentException("Invalid cronExpression " + cronExpression, e);
+        }
+        return trigger;
     }
 
     public void scheduleInvocation(final String jobName, final String group, final Date when,
