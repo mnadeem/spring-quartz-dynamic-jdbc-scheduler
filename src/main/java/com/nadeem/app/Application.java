@@ -33,7 +33,8 @@ public final class Application
         finally
         {
             ApplicationContext.shutdown();
-            SHUTDOWN_STALLER.unstall(); // Allow the shutdown thread to resume, after which the VM will terminate.
+            // Allow the shutdown thread to resume, after which the VM will terminate.
+            SHUTDOWN_STALLER.unstall();
         }
     }
 
@@ -58,10 +59,12 @@ public final class Application
             public void run()
             {
                 Application.quit();
-                SHUTDOWN_STALLER.stall(); // Don't finish executing this shutdown thread until the application has finished shutting down and tells it to.
+                // Don't finish executing this shutdown thread until the application has finished shutting down and tells it to.
+                SHUTDOWN_STALLER.stall();
             }
         });
-        APPLICATION_STALLER.stall(); // Pause the main() thread. The shutdown hook registered above will resume execution when it's time to shutdown.
+        // Pause the main() thread. The shutdown hook registered above will resume execution when it's time to shutdown.
+        APPLICATION_STALLER.stall();
     }
 
     public static void quit()
