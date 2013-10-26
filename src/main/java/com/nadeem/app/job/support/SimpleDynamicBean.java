@@ -1,8 +1,8 @@
-package com.nadeem.app.scheduler;
+package com.nadeem.app.job.support;
 
 import java.io.Serializable;
 
-public class SimpleBean implements Serializable
+public class SimpleDynamicBean implements Serializable
 {
 
     private static final long serialVersionUID = 1L;

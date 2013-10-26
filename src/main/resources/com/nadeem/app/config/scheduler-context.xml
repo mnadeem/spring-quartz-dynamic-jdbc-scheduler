@@ -7,6 +7,7 @@
                                    http://www.springframework.org/schema/util
 								   http://www.springframework.org/schema/util/spring-util.xsd">
 
+	<!-- 	JOB SCHEDULER	--> 
 	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="autoStartup" value="true" />
 		<property name="waitForJobsToCompleteOnShutdown" value="true" />
@@ -34,13 +35,12 @@
 				<prop key="org.quartz.jobStore.clusterCheckinInterval">20000</prop>
 				<prop key="org.quartz.jobStore.selectWithLockSQL">SELECT * FROM {0}LOCKS UPDLOCK WHERE LOCK_NAME = ?
 				</prop>
-
 			</props>
-		</property>
+		</property>		
 	</bean>
 
-	<bean id="targetBean" class="com.nadeem.app.scheduler.SimpleBean" />
-	
+	<bean id="targetBean" class="com.nadeem.app.job.support.SimpleDynamicBean" />
+
 	<bean id="dynamicScheduler" class="com.nadeem.app.scheduler.BaseDynamicScheduler">
 		<constructor-arg ref="scheduler"/>
 	</bean>
