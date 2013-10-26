@@ -1,7 +1,9 @@
 package com.nadeem.app.scheduler;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 import org.joda.time.Duration;
 import org.quartz.CronTrigger;
@@ -37,7 +39,7 @@ public class BaseDynamicScheduler implements InitializingBean
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception
+    public void afterPropertiesSet()
     {
         Assert.notNull(this.scheduler, "Scheduler must be set.");
     }
@@ -198,7 +200,7 @@ public class BaseDynamicScheduler implements InitializingBean
             return context.getJobDetail().getJobDataMap();
         }
 
-        private Object targetBean(final JobDataMap data) throws Exception
+        private Object targetBean(final JobDataMap data)
         {
             return data.get(TARGET_BEAN);
         }
@@ -213,7 +215,7 @@ public class BaseDynamicScheduler implements InitializingBean
             return (Object[]) data.get(ARGUMENTS_KEY);
         }
 
-        private void invokeMethod(final Object target, final String method, final Object[] args) throws Exception
+        private void invokeMethod(final Object target, final String method, final Object[] args) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException
         {
             MethodInvoker inv = new ArgumentConvertingMethodInvoker();
 
@@ -229,9 +231,9 @@ public class BaseDynamicScheduler implements InitializingBean
     {
         private Object targetBean;
         private String targetMethod;
-        private Object[] methodArgs;
+        private List<?> methodArgs;
 
-        public InvocationDetail(final Object newTargetBean, final String newTargetMethod, final Object[] newMethodArgs)
+        public InvocationDetail(final Object newTargetBean, final String newTargetMethod, final List<?> newMethodArgs)
         {
             this.targetBean = newTargetBean;
             this.targetMethod = newTargetMethod;
@@ -250,7 +252,7 @@ public class BaseDynamicScheduler implements InitializingBean
 
         public Object[] getMethodArgs()
         {
-            return methodArgs;
+            return methodArgs.toArray();
         }
     }
 }

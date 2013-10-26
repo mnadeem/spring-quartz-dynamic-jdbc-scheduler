@@ -1,5 +1,7 @@
 package com.nadeem.app;
 
+import java.util.Arrays;
+
 import org.joda.time.Minutes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +47,7 @@ public final class Application
 
     private static InvocationDetail newInvocationDetail()
     {
-        return new InvocationDetail(ApplicationContext.getBean("targetBean"), "sayHello", new Object[]{"Nadeem"});
+        return new InvocationDetail(ApplicationContext.getBean("targetBean"), "sayHello", Arrays.asList("Nadeem"));
     }
 
     private static void waitForTermination()
@@ -56,12 +58,10 @@ public final class Application
             public void run()
             {
                 Application.quit();
-                SHUTDOWN_STALLER.stall(); // Don't finish executing this shutdown thread until the
-                                            //application has finished shutting down and tells it to.
+                SHUTDOWN_STALLER.stall(); // Don't finish executing this shutdown thread until the application has finished shutting down and tells it to.
             }
         });
-        APPLICATION_STALLER.stall(); // Pause the main() thread. The shutdown hook registered above
-                                    //will resume execution when it's time to shutdown.
+        APPLICATION_STALLER.stall(); // Pause the main() thread. The shutdown hook registered above will resume execution when it's time to shutdown.
     }
 
     public static void quit()

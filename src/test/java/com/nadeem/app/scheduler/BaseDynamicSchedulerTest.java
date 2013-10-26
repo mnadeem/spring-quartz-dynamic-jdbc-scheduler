@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.joda.time.Minutes;
@@ -56,7 +57,7 @@ public class BaseDynamicSchedulerTest
     public void shouldScheduleNewScheduler() throws SchedulerException
     {
         this.targetBeingTested.scheduleWithInterval("Job", "GROUP", Minutes.ONE.toStandardDuration(),
-            new InvocationDetail(new Object(), "GROUP", new Object[] {"Prof"}));
+            new InvocationDetail(new Object(), "GROUP", Arrays.asList("Prof")));
         verify(this.scheduler, times(1)).scheduleJob(any(JobDetail.class), any(Trigger.class));
     }
 
@@ -65,7 +66,7 @@ public class BaseDynamicSchedulerTest
     {
         when(this.scheduler.getJobDetail(anyString(), anyString())).thenReturn(this.jobDetail);
         this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail(new Object(),
-            "GROUP", new Object[] {"Prof"}));
+            "GROUP", Arrays.asList("Prof")));
         verify(this.scheduler, times(1)).rescheduleJob(anyString(), anyString(), any(Trigger.class));
     }
 
@@ -74,7 +75,7 @@ public class BaseDynamicSchedulerTest
     {
         doThrow(new SchedulerException()).when(this.scheduler).getJobDetail(anyString(), anyString());
         this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail(new Object(),
-            "GROUP", new Object[] {"Prof"}));
+            "GROUP", Arrays.asList("Prof")));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -84,7 +85,7 @@ public class BaseDynamicSchedulerTest
         doThrow(new SchedulerException()).when(this.scheduler).scheduleJob((JobDetail) anyObject(),
             (Trigger) anyObject());
         this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail(new Object(),
-            "GROUP", new Object[] {"Prof"}));
+            "GROUP", Arrays.asList("Prof")));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -94,7 +95,7 @@ public class BaseDynamicSchedulerTest
         doThrow(new SchedulerException()).when(this.scheduler).rescheduleJob(anyString(), anyString(),
             (Trigger) anyObject());
         this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail(new Object(),
-            "GROUP", new Object[] {"Prof"}));
+            "GROUP", Arrays.asList("Prof")));
     }
 
     @Test
