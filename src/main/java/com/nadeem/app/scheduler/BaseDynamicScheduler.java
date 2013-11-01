@@ -1,5 +1,7 @@
 package com.nadeem.app.scheduler;
 
+import static com.nadeem.app.Constants.APPLICATION_CONTEXT_KEY;
+
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Date;
@@ -20,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.support.ArgumentConvertingMethodInvoker;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.util.MethodInvoker;
 
@@ -27,7 +30,7 @@ public class BaseDynamicScheduler implements InitializingBean
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseDynamicScheduler.class);
 
-    private static final String TARGET_BEAN = "targetBean";
+    private static final String TARGET_BEAN_NAME_KEY = "targetBean";
     private static final String ARGUMENTS_KEY = "arguments";
     private static final String METHOD_NAME_KEY = "method";
 
@@ -106,7 +109,7 @@ public class BaseDynamicScheduler implements InitializingBean
 
     private void setJobArguments(final InvocationDetail invocationDetail, final JobDetail detail)
     {
-        detail.getJobDataMap().put(TARGET_BEAN, invocationDetail.getTargetBean());
+        detail.getJobDataMap().put(TARGET_BEAN_NAME_KEY, invocationDetail.getTargetBeanName());
         detail.getJobDataMap().put(METHOD_NAME_KEY, invocationDetail.getTargetMethod());
         detail.getJobDataMap().put(ARGUMENTS_KEY, invocationDetail.getMethodArgs());
     }
@@ -179,14 +182,15 @@ public class BaseDynamicScheduler implements InitializingBean
     }
 
     public static class MethodInvocatingScheduledJob implements Job
-    {
+    {        
+
         @Override
         public void execute(final JobExecutionContext context) throws JobExecutionException
         {
             try
             {
                 JobDataMap data = jobData(context);
-                invokeMethod(targetBean(data), method(data), arguments(data));
+                invokeMethod(targetBean(context, data), method(data), arguments(data));
             }
             catch (Exception e)
             {
@@ -200,9 +204,8 @@ public class BaseDynamicScheduler implements InitializingBean
             return context.getJobDetail().getJobDataMap();
         }
 
-        private Object targetBean(final JobDataMap data)
-        {
-            return data.get(TARGET_BEAN);
+        private Object targetBean(JobExecutionContext context, JobDataMap data) throws Exception {
+            return applicationContext(context).getBean(data.getString(TARGET_BEAN_NAME_KEY));
         }
 
         private String method(final JobDataMap data)
@@ -213,6 +216,18 @@ public class BaseDynamicScheduler implements InitializingBean
         private Object[] arguments(final JobDataMap data)
         {
             return (Object[]) data.get(ARGUMENTS_KEY);
+        }
+
+        private ApplicationContext applicationContext(JobExecutionContext context) throws Exception {
+            ApplicationContext appCtx = (ApplicationContext)context.getScheduler()
+                                                                   .getContext()
+                                                                   .get(APPLICATION_CONTEXT_KEY);
+
+            if (appCtx == null) {
+                throw new JobExecutionException("Application context unavailable to scheduler for key '" 
+                                                    + APPLICATION_CONTEXT_KEY + "'"); 
+            }
+            return appCtx;
         }
 
         private void invokeMethod(final Object target, final String method, final Object[] args) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException
@@ -229,20 +244,20 @@ public class BaseDynamicScheduler implements InitializingBean
 
     public static class InvocationDetail
     {
-        private Object targetBean;
+        private String targetBeanName;
         private String targetMethod;
         private List<?> methodArgs;
 
-        public InvocationDetail(final Object newTargetBean, final String newTargetMethod, final List<?> newMethodArgs)
+        public InvocationDetail(final String newTargetBean, final String newTargetMethod, final List<?> newMethodArgs)
         {
-            this.targetBean = newTargetBean;
+            this.targetBeanName = newTargetBean;
             this.targetMethod = newTargetMethod;
             this.methodArgs = newMethodArgs;
         }
 
-        public Object getTargetBean()
+        public String getTargetBeanName()
         {
-            return targetBean;
+            return targetBeanName;
         }
 
         public String getTargetMethod()

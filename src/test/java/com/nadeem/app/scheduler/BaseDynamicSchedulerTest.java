@@ -57,7 +57,7 @@ public class BaseDynamicSchedulerTest
     public void shouldScheduleNewScheduler() throws SchedulerException
     {
         this.targetBeingTested.scheduleWithInterval("Job", "GROUP", Minutes.ONE.toStandardDuration(),
-            new InvocationDetail(new Object(), "GROUP", Arrays.asList("Prof")));
+            new InvocationDetail("targetBean", "GROUP", Arrays.asList("Prof")));
         verify(this.scheduler, times(1)).scheduleJob(any(JobDetail.class), any(Trigger.class));
     }
 
@@ -65,7 +65,7 @@ public class BaseDynamicSchedulerTest
     public void shouldReScheduleScheduler() throws Exception
     {
         when(this.scheduler.getJobDetail(anyString(), anyString())).thenReturn(this.jobDetail);
-        this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail(new Object(),
+        this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail("targetBean",
             "GROUP", Arrays.asList("Prof")));
         verify(this.scheduler, times(1)).rescheduleJob(anyString(), anyString(), any(Trigger.class));
     }
@@ -74,7 +74,7 @@ public class BaseDynamicSchedulerTest
     public void shouldThrowExceptionWhenFetchingJobDetailsFails() throws SchedulerException
     {
         doThrow(new SchedulerException()).when(this.scheduler).getJobDetail(anyString(), anyString());
-        this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail(new Object(),
+        this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail("targetBean",
             "GROUP", Arrays.asList("Prof")));
     }
 
@@ -84,7 +84,7 @@ public class BaseDynamicSchedulerTest
         when(this.scheduler.getJobDetail(anyString(), anyString())).thenReturn(null);
         doThrow(new SchedulerException()).when(this.scheduler).scheduleJob((JobDetail) anyObject(),
             (Trigger) anyObject());
-        this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail(new Object(),
+        this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail("targetBean",
             "GROUP", Arrays.asList("Prof")));
     }
 
@@ -94,7 +94,7 @@ public class BaseDynamicSchedulerTest
         when(this.scheduler.getJobDetail(anyString(), anyString())).thenReturn(new JobDetail());
         doThrow(new SchedulerException()).when(this.scheduler).rescheduleJob(anyString(), anyString(),
             (Trigger) anyObject());
-        this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail(new Object(),
+        this.targetBeingTested.scheduleInvocation("Job", "GROUP", new Date(), new InvocationDetail("targetBean",
             "GROUP", Arrays.asList("Prof")));
     }
 

@@ -48,7 +48,7 @@ public final class Application
 
     private static InvocationDetail newInvocationDetail()
     {
-        return new InvocationDetail(ApplicationContext.getBean("targetBean"), "sayHello", Arrays.asList("Nadeem"));
+        return new InvocationDetail("targetBean", "sayHello", Arrays.asList("Nadeem"));
     }
 
     private static void waitForTermination()
